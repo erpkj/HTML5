@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>HTML5 Camera Access Demo using getUserMedia API </title>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script>
+      function onFailure(err) {
+          alert("The following error occured: " + err.name);
+      }
+
+      // ffunction will convert canvas to an image
+		function convertCanvasToImage(canvas) {
+			var image = new Image();
+			image.src = canvas.toDataURL("image/png");
+			console.log(image.src);
+		}	
+
+      $(document).ready(function () {
+      	  var video = document.querySelector('#webcam');
+          navigator.getUserMedia = (navigator.getUserMedia ||
+                            navigator.webkitGetUserMedia ||
+                            navigator.mozGetUserMedia ||
+                            navigator.msGetUserMedia);
+          if (navigator.getUserMedia) {
+              navigator.getUserMedia
+                            (
+                              { video: true },
+                              function (localMediaStream) {
+                                  video.src = window.URL.createObjectURL(localMediaStream);
+ 
+                              }, onFailure);
+          }
+          else {
+              alert('OOPS No browser Support');
+          }
+
+          // Trigger photo take
+		document.getElementById("snap").addEventListener("click", function() {
+			var canvas = document.getElementById("canvas");
+				context = canvas.getContext("2d");
+				context.drawImage(video, 0, 0, 640, 480);
+				convertCanvasToImage(canvas);
+		});
+      });
+  </script>
+</head>
+<body>
+<p>Camera access demo working fine in Mozilla and Chrome.</p>
+<p>Safari and InternetExplorer does not support getUserMedia.</p>
+  <div>
+    <video id="webcam" width="500" autoplay></video>
+    <button id="snap">Take a Photo</button>
+    <canvas id="canvas" width="640" height="480"></canvas>
+  </div>
+</body>
+</html>
